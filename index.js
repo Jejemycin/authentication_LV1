@@ -31,6 +31,20 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
+  const email = req.body.username;
+  const password = req.body.password;
+  try{
+  const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+  if (checkResult.rows.length > 0){
+    res.send("Email already exist");
+  }else{
+    result = await db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [email, password]);
+  };  
+  console.log(result.rows);
+  res.render(secrets.ejs);
+}catch (err){
+  console.log(err);
+};
 });
 
 app.post("/login", async (req, res) => { 
