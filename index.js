@@ -47,7 +47,27 @@ app.post("/register", async (req, res) => {
 };
 });
 
-app.post("/login", async (req, res) => { 
+app.post("/login", async (req, res) => {
+  const email = req.body.username;
+  const password = req.body.password;
+  console.log(email);
+  try{
+    const checkEmail = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+    const response = checkEmail.rows[0];
+  if (checkEmail.rows.length > 0){
+    /*let storedEmail = response[0].email;*/
+    let storedPassword = response.password;
+    if (password === storedPassword){
+      res.render("secrets.ejs")
+    }else {
+      res.send("Password is incorrect, Try again")
+    }
+  }else {
+    res.send("Email does not exist, Try registering your email")
+  }
+} catch (err){
+  console.log(err);
+};
 });
 
 app.listen(port, () => {
